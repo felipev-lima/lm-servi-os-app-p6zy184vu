@@ -62,7 +62,8 @@ migrate(
     for (const f of camposCliente) {
       if (!clients.fields.getByName(f.name)) clients.fields.add(new Field(f))
     }
-    clients.addIndex('CREATE UNIQUE INDEX idx_clients_doc ON clients (doc) WHERE doc != ""')
+    // índice comum (o PocketBase não aceita índice parcial com WHERE)
+    clients.addIndex('CREATE INDEX idx_clients_doc ON clients (doc)')
     clients.addIndex('CREATE INDEX idx_clients_name ON clients (name)')
     clients.addIndex('CREATE INDEX idx_clients_nick ON clients (nickname)')
     app.save(clients)
