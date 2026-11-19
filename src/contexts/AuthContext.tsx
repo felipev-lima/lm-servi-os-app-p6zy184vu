@@ -1,111 +1,60 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+/**
+ * Autenticação do CRM.
+ *
+ * Uma conta por pessoa. O PocketBase guarda a sessão em localStorage, então
+ * quem já entrou continua entrado ao reabrir no celular.
+ */
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import pb from '@/lib/pocketbase/client'
-import type { UserRecord } from '@/types/database'
 
-interface AuthContextType {
-  user: UserRecord | null
-  token: string | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  login: (email: string, pass: string) => Promise<void>
-  logout: () => void
-  requestPasswordReset: (email: string) => Promise<void>
-  confirmPasswordReset: (token: string, password: string, passwordConfirm: string) => Promise<void>
-  refreshUser: () => Promise<void>
+export interface Usuario {
+  id: string
+  name?: string
+  email: string
+  role?: string
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+interface Contexto {
+  usuario: Usuario | null
+  carregando: boolean
+  entrar: (email: string, senha: string) => Promise<void>
+  sair: () => void
+}
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserRecord | null>(() => {
-    return (pb.authStore.record as unknown as UserRecord) || null
-  })
-  const [token, setToken] = useState<string | null>(() => pb.authStore.token)
-  const [isLoading, setIsLoading] = useState(true)
+const Ctx = createContext<Contexto>({} as Contexto)
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [usuario, setUsuario] = useState<Usuario | null>(pb.authStore.model as Usuario | null)
+  const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
-    // Escutar mudanças no store de autenticação
-    const unsubscribe = pb.authStore.onChange((token, model) => {
-      setToken(token)
-      setUser((model as unknown as UserRecord) || null)
+    const cancelar = pb.authStore.onChange(() => {
+      setUsuario(pb.authStore.model as Usuario | null)
     })
-
-    // Checar se o token atual é válido
-    const verifyAuth = async () => {
-      if (pb.authStore.isValid) {
-        try {
-          const authData = await pb.collection('users').authRefresh()
-          setUser(authData.record as unknown as UserRecord)
-        } catch {
-          pb.authStore.clear()
-          setUser(null)
-          setToken(null)
-        }
-      }
-      setIsLoading(false)
+    // valida a sessão guardada (token pode ter expirado)
+    if (pb.authStore.isValid) {
+      pb.collection('users')
+        .authRefresh()
+        .then(() => setUsuario(pb.authStore.model as Usuario | null))
+        .catch(() => pb.authStore.clear())
+        .finally(() => setCarregando(false))
+    } else {
+      setCarregando(false)
     }
-
-    verifyAuth()
-
-    return () => {
-      unsubscribe()
-    }
+    return cancelar
   }, [])
 
-  const login = async (email: string, pass: string) => {
-    const authData = await pb.collection('users').authWithPassword(email.trim(), pass)
-    setUser(authData.record as unknown as UserRecord)
-    setToken(authData.token)
+  const entrar = async (email: string, senha: string) => {
+    await pb.collection('users').authWithPassword(email.trim(), senha)
+    setUsuario(pb.authStore.model as Usuario | null)
   }
 
-  const logout = () => {
+  const sair = () => {
     pb.authStore.clear()
-    setUser(null)
-    setToken(null)
+    setUsuario(null)
   }
 
-  const requestPasswordReset = async (email: string) => {
-    await pb.collection('users').requestPasswordReset(email.trim())
-  }
-
-  const confirmPasswordReset = async (resetToken: string, pass: string, passConfirm: string) => {
-    await pb.collection('users').confirmPasswordReset(resetToken, pass, passConfirm)
-  }
-
-  const refreshUser = async () => {
-    if (pb.authStore.isValid) {
-      try {
-        const authData = await pb.collection('users').authRefresh()
-        setUser(authData.record as unknown as UserRecord)
-      } catch {
-        logout()
-      }
-    }
-  }
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        isAuthenticated: !!token && !!user,
-        isLoading,
-        login,
-        logout,
-        requestPasswordReset,
-        confirmPasswordReset,
-        refreshUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  )
+  return <Ctx.Provider value={{ usuario, carregando, entrar, sair }}>{children}</Ctx.Provider>
 }
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider')
-  }
-  return context
-}
+export const useAuth = () => useContext(Ctx)
