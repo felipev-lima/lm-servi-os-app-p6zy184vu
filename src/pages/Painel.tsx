@@ -103,7 +103,7 @@ export default function Painel() {
         </div>
         <Button
           asChild
-          className="bg-[#0F6A3A] hover:bg-[#0F6A3A]/90 text-white font-semibold h-9 gap-1.5 shrink-0"
+          className="bg-[#0B3D91] hover:bg-[#0B3D91]/90 text-white font-semibold h-9 gap-1.5 shrink-0"
         >
           <Link to="/lancamentos?novo=1">
             <Plus className="w-4 h-4" /> Lançar
@@ -163,7 +163,7 @@ export default function Painel() {
               <Link
                 key={r.cliente.id}
                 to={`/clientes/${r.cliente.id}`}
-                className="flex items-center justify-between gap-2 p-2 rounded-lg border bg-card hover:border-[#0F6A3A]/50 transition"
+                className="flex items-center justify-between gap-2 p-2 rounded-lg border bg-card hover:border-[#0B3D91]/50 transition"
               >
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold truncate">

@@ -82,17 +82,19 @@ export const TIPOS: Record<
   TipoLancamento,
   { label: string; descricao: string; cor: string; bg: string }
 > = {
+  // Paleta azul do CRM: capital (mais escuro) → serviço (mais claro),
+  // mantendo DINHEIRO em verde porque é dinheiro que entrou.
   CAPITAL: {
     label: 'Capital',
     descricao: 'Equipamento permanente: DVR, câmera, switch, HD',
-    cor: 'text-purple-800 border-purple-300',
-    bg: 'bg-purple-50',
+    cor: 'text-indigo-900 border-indigo-400',
+    bg: 'bg-indigo-50',
   },
   CONSUMO: {
     label: 'Consumo',
     descricao: 'Material de instalação: cabo, conector, toner',
-    cor: 'text-orange-800 border-orange-300',
-    bg: 'bg-orange-50',
+    cor: 'text-sky-800 border-sky-300',
+    bg: 'bg-sky-50',
   },
   SERVICO: {
     label: 'Serviço',

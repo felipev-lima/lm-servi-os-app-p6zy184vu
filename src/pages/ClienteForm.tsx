@@ -239,7 +239,7 @@ export default function ClienteForm() {
       <Button
         onClick={salvar}
         disabled={salvando}
-        className="w-full h-10 bg-[#0F6A3A] hover:bg-[#0F6A3A]/90 text-white font-semibold gap-2"
+        className="w-full h-10 bg-[#0B3D91] hover:bg-[#0B3D91]/90 text-white font-semibold gap-2"
       >
         {salvando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
         {salvando ? 'Salvando...' : 'Salvar cliente'}

@@ -36,7 +36,7 @@ export default function Login() {
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center space-y-2">
-          <div className="w-16 h-16 rounded-2xl bg-[#0F6A3A] text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg">
+          <div className="w-16 h-16 rounded-2xl bg-[#0B3D91] text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg">
             LM
           </div>
           <h1 className="text-xl font-black tracking-tight">LM SERVIÇOS</h1>
@@ -78,7 +78,7 @@ export default function Login() {
           <Button
             type="submit"
             disabled={enviando}
-            className="w-full h-10 bg-[#0F6A3A] hover:bg-[#0F6A3A]/90 text-white font-semibold gap-2"
+            className="w-full h-10 bg-[#0B3D91] hover:bg-[#0B3D91]/90 text-white font-semibold gap-2"
           >
             {enviando ? (
               <Loader2 className="w-4 h-4 animate-spin" />

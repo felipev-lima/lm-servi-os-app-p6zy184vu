@@ -101,7 +101,7 @@ export default function ClienteFicha() {
         <Button
           asChild
           size="sm"
-          className="h-8 bg-[#0F6A3A] hover:bg-[#0F6A3A]/90 text-white gap-1 shrink-0"
+          className="h-8 bg-[#0B3D91] hover:bg-[#0B3D91]/90 text-white gap-1 shrink-0"
         >
           <Link to={`/lancamentos?cliente=${cliente.id}&novo=1`}>
             <Plus className="w-3.5 h-3.5" /> Lançar
@@ -155,7 +155,7 @@ export default function ClienteFicha() {
           {cliente.phone && (
             <div className="flex items-center gap-1.5">
               <Phone className="w-3 h-3 text-muted-foreground shrink-0" />
-              <a href={`tel:${cliente.phone}`} className="text-[#0F6A3A] underline">
+              <a href={`tel:${cliente.phone}`} className="text-[#0B3D91] underline">
                 {cliente.phone}
               </a>
             </div>

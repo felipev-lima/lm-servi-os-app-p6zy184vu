@@ -108,7 +108,7 @@ export default function Clientes() {
       <div className="space-y-1.5">
         {filtrados.map((r) => (
           <Link key={r.cliente.id} to={`/clientes/${r.cliente.id}`}>
-            <Card className="hover:border-[#0F6A3A]/50 transition">
+            <Card className="hover:border-[#0B3D91]/50 transition">
               <CardContent className="p-2.5 flex items-center gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 flex-wrap">

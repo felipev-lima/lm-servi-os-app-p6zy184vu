@@ -220,7 +220,7 @@ export default function Lancamentos() {
         </div>
         <Button
           onClick={() => setAberto(true)}
-          className="bg-[#0F6A3A] hover:bg-[#0F6A3A]/90 text-white font-semibold h-9 gap-1.5 shrink-0"
+          className="bg-[#0B3D91] hover:bg-[#0B3D91]/90 text-white font-semibold h-9 gap-1.5 shrink-0"
         >
           <Plus className="w-4 h-4" /> Lançar
         </Button>
@@ -287,7 +287,7 @@ export default function Lancamentos() {
 
       <div className="flex items-center justify-between text-[11px] px-1">
         <span className="font-semibold">{filtrados.length} lançamento(s)</span>
-        <span className="font-mono font-bold text-[#0F6A3A]">Total: {brl(somaFiltrada)}</span>
+        <span className="font-mono font-bold text-[#0B3D91]">Total: {brl(somaFiltrada)}</span>
       </div>
 
       {carregando ? (
@@ -417,7 +417,7 @@ export default function Lancamentos() {
                         setClienteId(c.id)
                         setBuscaCliente(c.nickname || c.name)
                       }}
-                      className="w-full text-left px-2 py-1.5 hover:bg-[#0F6A3A]/5"
+                      className="w-full text-left px-2 py-1.5 hover:bg-[#0B3D91]/5"
                     >
                       <span className="text-[11px] font-semibold block">
                         {c.nickname || c.name}
@@ -449,8 +449,8 @@ export default function Lancamentos() {
                     }}
                     className={`text-[10px] px-2 py-2 rounded-md border font-semibold ${
                       tipo === k
-                        ? 'bg-[#0F6A3A] text-white border-[#0F6A3A]'
-                        : 'bg-white hover:border-[#0F6A3A]/50'
+                        ? 'bg-[#0B3D91] text-white border-[#0B3D91]'
+                        : 'bg-white hover:border-[#0B3D91]/50'
                     }`}
                   >
                     {TIPOS[k].label}
@@ -529,11 +529,11 @@ export default function Lancamentos() {
               </div>
             </div>
 
-            <div className="rounded-lg bg-[#0F6A3A]/5 border border-[#0F6A3A]/20 p-2 flex items-center justify-between">
+            <div className="rounded-lg bg-[#0B3D91]/5 border border-[#0B3D91]/20 p-2 flex items-center justify-between">
               <span className="text-[11px] font-semibold">Total do lançamento</span>
               <span
                 className={`font-mono text-sm font-black ${
-                  total < 0 ? 'text-emerald-700' : 'text-[#0F6A3A]'
+                  total < 0 ? 'text-emerald-700' : 'text-[#0B3D91]'
                 }`}
               >
                 {brl(total)}
@@ -553,7 +553,7 @@ export default function Lancamentos() {
             <Button
               onClick={salvar}
               disabled={salvando}
-              className="h-9 text-xs bg-[#0F6A3A] hover:bg-[#0F6A3A]/90 text-white font-semibold gap-1.5"
+              className="h-9 text-xs bg-[#0B3D91] hover:bg-[#0B3D91]/90 text-white font-semibold gap-1.5"
             >
               {salvando ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
