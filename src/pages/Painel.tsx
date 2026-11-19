@@ -34,7 +34,10 @@ export default function Painel() {
   const hoje = new Date()
   const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`
 
+  // "A receber" = só quem deve. Quem tem crédito entra em outra linha, senão
+  // o total não fecha com o da planilha (Escola Menino Jesus tem −R$ 1.110,00).
   const aReceber = resumos.reduce((s, r) => s + (r.saldo > 0 ? r.saldo : 0), 0)
+  const aCredito = resumos.reduce((s, r) => s + (r.saldo < 0 ? r.saldo : 0), 0)
   const recebidoMes = lancamentos
     .filter((l) => l.kind === 'DINHEIRO' && (l.date || '').slice(0, 7) === mesAtual)
     .reduce((s, l) => s + Math.abs(totalDaLinha(l)), 0)
@@ -87,6 +90,8 @@ export default function Painel() {
     },
   ]
 
+  const temCredito = Math.abs(aCredito) > 0.005
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
@@ -123,6 +128,17 @@ export default function Painel() {
           )
         })}
       </div>
+
+      {temCredito && (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[10px] text-emerald-900 flex items-start gap-2">
+          <span className="font-bold shrink-0">Crédito a devolver:</span>
+          <span>
+            {brl(Math.abs(aCredito))} — {resumos.filter((r) => r.saldo < -0.005).length} cliente(s).
+            Estes valores são <strong>abatidos</strong> quando você somar tudo: o saldo geral dá{' '}
+            <strong>{brl(resumos.reduce((s, r) => s + r.saldo, 0))}</strong>, igual à planilha.
+          </span>
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-3.5">
