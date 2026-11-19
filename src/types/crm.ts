@@ -108,15 +108,19 @@ export const TIPOS: Record<
   },
 }
 
-/** Total de uma linha. No DINHEIRO o valor é sempre negativo (abate). */
+/**
+ * Total de uma linha = quantidade × valor unitário.
+ *
+ * O sinal vem do valor gravado, não do tipo. Isso é necessário porque a
+ * planilha do Felipe tem casos legítimos dos dois sinais:
+ *   - DINHEIRO negativo = pagamento que abate a dívida (o caso comum);
+ *   - DINHEIRO positivo = crédito/devolução que soma;
+ *   - CONSUMO/CAPITAL/SERVIÇO negativo = desconto naquele item.
+ * Forçar o sinal por tipo distorcia o total (erro de R$ 7.882,66 na
+ * importação inicial).
+ */
 export function totalDaLinha(l: Pick<Lancamento, 'kind' | 'quantity' | 'unit_price'>): number {
-  const q = Number(l.quantity ?? 0)
-  const u = Number(l.unit_price ?? 0)
-  const bruto = q * u
-  // A planilha do Felipe guarda o pagamento como valor negativo. Aqui ele é
-  // gravado positivo e invertido no cálculo — assim quem lança não precisa
-  // lembrar do sinal (era uma das fontes de erro da planilha).
-  return l.kind === 'DINHEIRO' ? -Math.abs(bruto) : bruto
+  return Number(l.quantity ?? 0) * Number(l.unit_price ?? 0)
 }
 
 /** Saldo de um conjunto de lançamentos (positivo = o cliente deve) */
