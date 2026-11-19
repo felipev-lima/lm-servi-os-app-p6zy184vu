@@ -14,12 +14,14 @@ migrate(
       // não existe: cria
     }
 
-    const user = new Record(app.findCollectionByNameOrId('users'))
+    // A coleção users deste projeto NÃO tem o campo `role` — definir um campo
+    // inexistente fazia o save gravar sem a senha, e o login falhava.
+    const users = app.findCollectionByNameOrId('users')
+    const user = new Record(users)
     user.set('email', email)
     user.set('password', 'Fel161181')
     user.set('passwordConfirm', 'Fel161181')
     user.set('name', 'Felipe Lima')
-    user.set('role', 'admin')
     user.set('emailVisibility', true)
     user.set('verified', true)
     app.save(user)
