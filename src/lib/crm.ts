@@ -54,6 +54,8 @@ export async function listarLancamentos(opcoes?: {
   de?: string
   ate?: string
   tipo?: string
+  /** Quando informado, devolve só os N mais recentes (abertura do painel). */
+  limite?: number
 }): Promise<Lancamento[]> {
   const partes: string[] = []
   if (opcoes?.clienteId) partes.push(`client = "${opcoes.clienteId}"`)
@@ -64,11 +66,18 @@ export async function listarLancamentos(opcoes?: {
   // `sort=-created` faz o PocketBase responder 400 nesta coleção (o campo
   // created é autodate e o índice composto não existe). Ordenar por date puro
   // funciona e é o que importa: o lançamento vive pela data do serviço.
-  const res = await pb.collection('transactions').getFullList({
+  const opcoesReq = {
     sort: '-date',
     filter: partes.join(' && '),
     expand: 'client',
-  })
+  }
+
+  if (opcoes?.limite) {
+    const res = await pb.collection('transactions').getList(1, opcoes.limite, opcoesReq)
+    return res.items as unknown as Lancamento[]
+  }
+
+  const res = await pb.collection('transactions').getFullList(opcoesReq)
   return res as unknown as Lancamento[]
 }
 
@@ -97,6 +106,36 @@ export async function marcarEnvio(ids: string[], situacao: 'PENDENTE' | 'ENVIADA
       }),
     ),
   )
+}
+
+// ---------------- RESUMO POR CLIENTE (view) ----------------
+
+/**
+ * Lê a view `client_summary`: uma linha por cliente já com capital, consumo,
+ * serviço, dinheiro, saldo e número de lançamentos somados no banco.
+ *
+ * Isso substitui carregar os 946 lançamentos na abertura do painel — que dava
+ * ~1 MB de JSON no celular e fazia o app parecer travado (medido em 19/11).
+ */
+export async function listarResumoClientes(): Promise<ResumoCliente[]> {
+  const res = await pb.collection('client_summary').getFullList({ sort: '-saldo' })
+  return res.map((r: any) => ({
+    cliente: {
+      id: r.id,
+      name: r.name || '',
+      nickname: r.nickname || '',
+      doc: r.doc || '',
+      phone: r.phone || '',
+      active: r.active !== false,
+      revisar: !!r.revisar,
+    } as Cliente,
+    capital: Number(r.capital || 0),
+    consumo: Number(r.consumo || 0),
+    servico: Number(r.servico || 0),
+    dinheiro: Number(r.dinheiro || 0),
+    saldo: Number(r.saldo || 0),
+    lancamentos: Number(r.lancamentos || 0),
+  }))
 }
 
 // ---------------- PRODUTOS ----------------

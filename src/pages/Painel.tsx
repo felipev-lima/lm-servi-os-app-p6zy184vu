@@ -7,7 +7,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listarClientes, listarLancamentos, resumirPorCliente, type ResumoCliente } from '@/lib/crm'
+import { listarResumoClientes, listarLancamentos, type ResumoCliente } from '@/lib/crm'
 import { brl, dataBR, totalDaLinha, TIPOS, type Lancamento } from '@/types/crm'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -22,8 +22,13 @@ export default function Painel() {
   useEffect(() => {
     ;(async () => {
       try {
-        const [clientes, lcs] = await Promise.all([listarClientes(), listarLancamentos()])
-        setResumos(resumirPorCliente(clientes, lcs))
+        // A view traz os 73 clientes já somados (27 KB). Os últimos lançamentos
+        // vêm numa consulta curta — nunca os 946 de uma vez.
+        const [resumos, lcs] = await Promise.all([
+          listarResumoClientes(),
+          listarLancamentos({ limite: 6 }),
+        ])
+        setResumos(resumos)
         setLancamentos(lcs)
       } finally {
         setCarregando(false)

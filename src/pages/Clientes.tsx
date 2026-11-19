@@ -6,7 +6,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { listarClientes, listarLancamentos, resumirPorCliente } from '@/lib/crm'
+import { listarResumoClientes } from '@/lib/crm'
 import type { ResumoCliente } from '@/lib/crm'
 import { brl } from '@/types/crm'
 import { Input } from '@/components/ui/input'
@@ -24,8 +24,8 @@ export default function Clientes() {
   useEffect(() => {
     ;(async () => {
       try {
-        const [clientes, lcs] = await Promise.all([listarClientes(), listarLancamentos()])
-        setTodos(resumirPorCliente(clientes, lcs))
+        // a view já traz os totais somados no banco: 27 KB em vez de 1 MB
+        setTodos(await listarResumoClientes())
       } finally {
         setCarregando(false)
       }
