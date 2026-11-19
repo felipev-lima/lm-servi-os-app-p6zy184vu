@@ -55,8 +55,11 @@ export async function listarLancamentos(opcoes?: {
   if (opcoes?.ate) partes.push(`date <= "${opcoes.ate} 23:59:59"`)
   if (opcoes?.tipo) partes.push(`kind = "${opcoes.tipo}"`)
 
+  // `sort=-created` faz o PocketBase responder 400 nesta coleção (o campo
+  // created é autodate e o índice composto não existe). Ordenar por date puro
+  // funciona e é o que importa: o lançamento vive pela data do serviço.
   const res = await pb.collection('transactions').getFullList({
-    sort: '-date,-created',
+    sort: '-date',
     filter: partes.join(' && '),
     expand: 'client',
   })
@@ -94,7 +97,7 @@ export async function marcarEnvio(ids: string[], situacao: 'PENDENTE' | 'ENVIADA
 
 export async function listarOrcamentos(): Promise<Orcamento[]> {
   const res = await pb.collection('quotes').getFullList({
-    sort: '-created',
+    sort: '-date',
     expand: 'client',
   })
   return res as unknown as Orcamento[]
