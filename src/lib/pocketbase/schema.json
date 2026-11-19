@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T21:48:36.957Z",
+  "generatedAt": "2026-11-19T23:15:39.248Z",
   "collections": [
     {
       "name": "users",
@@ -29,14 +29,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -90,14 +95,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "nickname",
@@ -116,7 +126,11 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["CNPJ", "CPF", ""]
+          "selectValues": [
+            "CNPJ",
+            "CPF",
+            ""
+          ]
         },
         {
           "name": "contact_name",
@@ -207,17 +221,24 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
-      "indexes": ["CREATE INDEX idx_services_name ON services (name)"]
+      "indexes": [
+        "CREATE INDEX idx_services_name ON services (name)"
+      ]
     },
     {
       "name": "work_orders",
@@ -248,7 +269,11 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["novo", "em_andamento", "concluido"]
+          "selectValues": [
+            "novo",
+            "em_andamento",
+            "concluido"
+          ]
         },
         {
           "name": "date",
@@ -267,21 +292,31 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["baixa", "media", "alta", "urgente"]
+          "selectValues": [
+            "baixa",
+            "media",
+            "alta",
+            "urgente"
+          ]
         },
         {
           "name": "created",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -355,7 +390,12 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["pendente", "aprovado", "rejeitado", "convertido_em_os"]
+          "selectValues": [
+            "pendente",
+            "aprovado",
+            "rejeitado",
+            "convertido_em_os"
+          ]
         },
         {
           "name": "notes",
@@ -368,14 +408,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "number",
@@ -412,6 +457,64 @@
           "type": "number",
           "required": false,
           "system": false
+        },
+        {
+          "name": "client_nickname",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "delivered_at",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "invoiced_at",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "delivered_by_name",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "delivered_by_role",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "signature_client",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "signature_deliverer",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "photos",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sent_to_finance",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "PENDENTE",
+            "ENVIADA"
+          ]
         }
       ],
       "indexes": [
@@ -449,14 +552,22 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["CAPITAL", "CONSUMO", "SERVICO", "DINHEIRO"]
+          "selectValues": [
+            "CAPITAL",
+            "CONSUMO",
+            "SERVICO",
+            "DINHEIRO"
+          ]
         },
         {
           "name": "item_type",
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["PRODUTO", "SERVICO"]
+          "selectValues": [
+            "PRODUTO",
+            "SERVICO"
+          ]
         },
         {
           "name": "description",
@@ -493,7 +604,10 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["PENDENTE", "ENVIADA"]
+          "selectValues": [
+            "PENDENTE",
+            "ENVIADA"
+          ]
         },
         {
           "name": "sent_at",
@@ -509,6 +623,159 @@
         },
         {
           "name": "legacy_row",
+          "type": "text",
+          "required": false,
+          "system": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "products",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "unit",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "UN",
+            "M",
+            "KG",
+            "L",
+            "CX",
+            "PC",
+            "PAR",
+            "ROLO",
+            "M2"
+          ]
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "brand",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "notes",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "active",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "fl_product_id",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "pending_review",
+          "type": "bool",
+          "required": false,
+          "system": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "settings",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "razao_social",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "nome_fantasia",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cnpj",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "ie",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "endereco",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "telefone",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "logo",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "assinatura_diretor",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "diretor_nome",
           "type": "text",
           "required": false,
           "system": false
