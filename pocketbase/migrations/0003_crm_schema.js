@@ -62,10 +62,8 @@ migrate(
     for (const f of camposCliente) {
       if (!clients.fields.getByName(f.name)) clients.fields.add(new Field(f))
     }
-    // índice comum (o PocketBase não aceita índice parcial com WHERE)
-    clients.addIndex('CREATE INDEX idx_clients_doc ON clients (doc)')
-    clients.addIndex('CREATE INDEX idx_clients_name ON clients (name)')
-    clients.addIndex('CREATE INDEX idx_clients_nick ON clients (nickname)')
+    // Sem índice customizado de propósito: o PocketBase gera o essencial nas
+    // relações, e o volume aqui (centenas de linhas) não precisa de mais.
     app.save(clients)
     const clientsId = clients.id
 
@@ -120,9 +118,6 @@ migrate(
     for (const f of camposTx) {
       if (!tx.fields.getByName(f.name)) tx.fields.add(new Field(f))
     }
-    tx.addIndex('CREATE INDEX idx_tx_client ON transactions (client)')
-    tx.addIndex('CREATE INDEX idx_tx_date ON transactions (date)')
-    tx.addIndex('CREATE INDEX idx_tx_kind ON transactions (kind)')
     app.save(tx)
 
     // ---------- ORÇAMENTOS ----------
