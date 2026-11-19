@@ -5,7 +5,7 @@
  * Nada é assumido: o que pode faltar é tratado como vazio.
  */
 import pb from '@/lib/pocketbase/client'
-import type { Cliente, Lancamento, Orcamento } from '@/types/crm'
+import { totalDaLinha, type Cliente, type Lancamento, type Orcamento } from '@/types/crm'
 
 const normalizarCliente = (r: any): Cliente => ({
   ...r,
@@ -137,17 +137,17 @@ export function resumirPorCliente(clientes: Cliente[], lancamentos: Lancamento[]
   for (const l of lancamentos) {
     const alvo = mapa.get(l.client)
     if (!alvo) continue
-    const q = Number(l.quantity ?? 0)
-    const u = Number(l.unit_price ?? 0)
-    const bruto = q * u
-    if (l.kind === 'CAPITAL') alvo.capital += bruto
-    else if (l.kind === 'CONSUMO') alvo.consumo += bruto
-    else if (l.kind === 'SERVICO') alvo.servico += bruto
-    else alvo.dinheiro += Math.abs(bruto)
+    // o sinal vem do valor gravado (pagamento negativo abate, crédito soma)
+    const v = totalDaLinha(l)
+    if (l.kind === 'CAPITAL') alvo.capital += v
+    else if (l.kind === 'CONSUMO') alvo.consumo += v
+    else if (l.kind === 'SERVICO') alvo.servico += v
+    else alvo.dinheiro += v
     alvo.lancamentos += 1
   }
   for (const r of mapa.values()) {
-    r.saldo = r.capital + r.consumo + r.servico - r.dinheiro
+    // dinheiro já entra com o sinal: soma tudo
+    r.saldo = r.capital + r.consumo + r.servico + r.dinheiro
   }
   return Array.from(mapa.values())
 }

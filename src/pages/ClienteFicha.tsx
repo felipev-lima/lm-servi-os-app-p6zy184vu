@@ -78,10 +78,11 @@ export default function ClienteFicha() {
   const servico = lancamentos
     .filter((l) => l.kind === 'SERVICO')
     .reduce((s, l) => s + totalDaLinha(l), 0)
-  const dinheiro = Math.abs(
-    lancamentos.filter((l) => l.kind === 'DINHEIRO').reduce((s, l) => s + totalDaLinha(l), 0),
-  )
-  const saldoFinal = capital + consumo + servico - dinheiro
+  // o dinheiro já vem negativo quando abate; soma direto
+  const dinheiro = lancamentos
+    .filter((l) => l.kind === 'DINHEIRO')
+    .reduce((s, l) => s + totalDaLinha(l), 0)
+  const saldoFinal = capital + consumo + servico + dinheiro
 
   return (
     <div className="space-y-3">
