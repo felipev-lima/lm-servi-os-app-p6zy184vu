@@ -5,7 +5,13 @@
  * Nada é assumido: o que pode faltar é tratado como vazio.
  */
 import pb from '@/lib/pocketbase/client'
-import { totalDaLinha, type Cliente, type Lancamento, type Orcamento } from '@/types/crm'
+import {
+  totalDaLinha,
+  type Cliente,
+  type Lancamento,
+  type Orcamento,
+  type Produto,
+} from '@/types/crm'
 
 const normalizarCliente = (r: any): Cliente => ({
   ...r,
@@ -91,6 +97,21 @@ export async function marcarEnvio(ids: string[], situacao: 'PENDENTE' | 'ENVIADA
       }),
     ),
   )
+}
+
+// ---------------- PRODUTOS ----------------
+
+export async function listarProdutos(busca = ''): Promise<Produto[]> {
+  const filtro = busca.trim() ? `name ~ "${busca.replace(/"/g, '')}"` : ''
+  const res = await pb.collection('products').getFullList({
+    sort: 'name',
+    filter: filtro,
+  })
+  return res as unknown as Produto[]
+}
+
+export async function salvarProduto(dados: Partial<Produto>, id?: string) {
+  return id ? pb.collection('products').update(id, dados) : pb.collection('products').create(dados)
 }
 
 // ---------------- ORÇAMENTOS ----------------

@@ -8,7 +8,22 @@
 export type TipoLancamento = 'CAPITAL' | 'CONSUMO' | 'SERVICO' | 'DINHEIRO'
 export type TipoItem = 'PRODUTO' | 'SERVICO'
 export type SituacaoEnvio = 'PENDENTE' | 'ENVIADA'
-export type StatusOrcamento = 'RASCUNHO' | 'ENVIADO' | 'APROVADO' | 'REJEITADO' | 'CONVERTIDO'
+/** O fluxo real do Felipe: orçamento → pedido → entregue → faturado */
+export type StatusOrcamento = 'ORCAMENTO' | 'PEDIDO' | 'ENTREGUE' | 'FATURADO' | 'CANCELADO'
+
+export interface Produto {
+  id: string
+  name: string
+  unit?: string
+  category?: string
+  brand?: string
+  /** preço de venda — o que vai no orçamento */
+  price?: number
+  notes?: string
+  active?: boolean
+  fl_product_id?: string
+  pending_review?: boolean
+}
 
 export interface Cliente {
   id: string
@@ -59,6 +74,10 @@ export interface ItemOrcamento {
   description: string
   quantity: number
   unit_price: number
+  /** capital / consumo / serviço — igual à coluna TIPO da planilha */
+  kind?: TipoLancamento
+  unit?: string
+  product_id?: string
 }
 
 export interface Orcamento {
@@ -73,6 +92,14 @@ export interface Orcamento {
   delivery_terms?: string
   validity_days?: number
   notes?: string
+  delivered_at?: string
+  invoiced_at?: string
+  delivered_by_name?: string
+  delivered_by_role?: string
+  signature_client?: string
+  signature_deliverer?: string
+  photos?: string[]
+  sent_to_finance?: SituacaoEnvio
   expand?: { client?: Cliente }
   created?: string
 }
