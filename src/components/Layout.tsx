@@ -14,6 +14,7 @@ import {
   Receipt,
   FileText,
   FileSpreadsheet,
+  Settings,
   LogOut,
   Menu,
   X,
@@ -25,6 +26,7 @@ const MENU = [
   { nome: 'Lançamentos', href: '/lancamentos', icone: Receipt },
   { nome: 'Orçamentos', href: '/orcamentos', icone: FileText },
   { nome: 'Relatórios', href: '/relatorios', icone: FileSpreadsheet },
+  { nome: 'Configurações', href: '/configuracoes', icone: Settings },
 ]
 
 export default function Layout() {

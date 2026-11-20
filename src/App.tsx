@@ -12,6 +12,7 @@ import ClienteForm from '@/pages/ClienteForm'
 import Lancamentos from '@/pages/Lancamentos'
 import Orcamentos from '@/pages/Orcamentos'
 import Relatorios from '@/pages/Relatorios'
+import Configuracoes from '@/pages/Configuracoes'
 import NotFound from '@/pages/NotFound'
 
 /** Bloqueia as telas internas para quem não entrou */
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/lancamentos" element={<Lancamentos />} />
             <Route path="/orcamentos" element={<Orcamentos />} />
             <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
