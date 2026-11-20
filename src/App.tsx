@@ -11,6 +11,7 @@ import ClienteFicha from '@/pages/ClienteFicha'
 import ClienteForm from '@/pages/ClienteForm'
 import Lancamentos from '@/pages/Lancamentos'
 import Orcamentos from '@/pages/Orcamentos'
+import Relatorios from '@/pages/Relatorios'
 import NotFound from '@/pages/NotFound'
 
 /** Bloqueia as telas internas para quem não entrou */
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/clientes/:id/editar" element={<ClienteForm />} />
             <Route path="/lancamentos" element={<Lancamentos />} />
             <Route path="/orcamentos" element={<Orcamentos />} />
+            <Route path="/relatorios" element={<Relatorios />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

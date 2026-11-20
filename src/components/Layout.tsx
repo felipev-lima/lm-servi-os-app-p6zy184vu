@@ -15,6 +15,7 @@ const MENU = [
   { nome: 'Clientes', href: '/clientes', icone: Users },
   { nome: 'Lançamentos', href: '/lancamentos', icone: Receipt },
   { nome: 'Orçamentos', href: '/orcamentos', icone: FileText },
+  { nome: 'Relatórios', href: '/relatorios', icone: FileSpreadsheet },
 ]
 
 export default function Layout() {
