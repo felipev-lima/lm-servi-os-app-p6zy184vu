@@ -11,12 +11,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { listarResumoClientes, listarLancamentos, type ResumoCliente } from '@/lib/crm'
 import { brl, dataBR, totalDaLinha, TIPOS, type Lancamento, type TipoLancamento } from '@/types/crm'
-import { baixarExcel, montarTabelaHTML, type BlocoPlanilha } from '@/lib/exportarPlanilha'
+import { baixarExcel, type BlocoPlanilha } from '@/lib/exportarPlanilha'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Label } from '@/components/ui/label'
 import {
   Search,
   Loader2,

@@ -8,7 +8,16 @@ import { useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
-import { LayoutDashboard, Users, Receipt, FileText, LogOut, Menu, X } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Users,
+  Receipt,
+  FileText,
+  FileSpreadsheet,
+  LogOut,
+  Menu,
+  X,
+} from 'lucide-react'
 
 const MENU = [
   { nome: 'Painel', href: '/', icone: LayoutDashboard },
