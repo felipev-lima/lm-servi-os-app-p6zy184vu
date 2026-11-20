@@ -85,12 +85,23 @@ export default function Lancamentos() {
   const [pagina, setPagina] = useState(1)
   const [totalItens, setTotalItens] = useState(0)
 
-  const carregar = async (pag = pagina) => {
+  /**
+   * O filtro de TIPO vai para o servidor.
+   *
+   * Antes ele filtrava só a página carregada: escolher "Capital" mostrava os
+   * 14 capitais da página 1 e escondia os outros 500 e tantos. Agora troca a
+   * consulta, e o contador reflete o total real.
+   */
+  const carregar = async (pag = pagina, tipo = filtroTipo) => {
     setCarregando(true)
     try {
       const [cs, ls] = await Promise.all([
         listarClientes(),
-        listarLancamentos({ limite: POR_PAGINA, pagina: pag }),
+        listarLancamentos({
+          limite: POR_PAGINA,
+          pagina: pag,
+          tipo: tipo === 'TODOS' ? undefined : tipo,
+        }),
       ])
       setClientes(cs)
       setLancamentos(ls)
@@ -101,9 +112,9 @@ export default function Lancamentos() {
   }
 
   useEffect(() => {
-    void carregar(pagina)
+    void carregar(pagina, filtroTipo)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagina])
+  }, [pagina, filtroTipo])
 
   // abre o formulário quando vem do painel/ficha (?novo=1)
   useEffect(() => {
@@ -208,7 +219,8 @@ export default function Lancamentos() {
   }
 
   const filtrados = lancamentos.filter((l) => {
-    if (filtroTipo !== 'TODOS' && l.kind !== filtroTipo) return false
+    // o TIPO já foi filtrado no servidor (ver `carregar`); aqui só o que dá
+    // para fazer na página: envio e busca por texto
     const envio = l.sent_to_finance || 'PENDENTE'
     if (filtroEnvio !== 'TODOS' && envio !== filtroEnvio) return false
     const t = busca.trim().toLowerCase()
@@ -253,7 +265,10 @@ export default function Lancamentos() {
           <Button
             size="sm"
             variant={filtroTipo === 'TODOS' ? 'default' : 'outline'}
-            onClick={() => setFiltroTipo('TODOS')}
+            onClick={() => {
+              setFiltroTipo('TODOS')
+              setPagina(1)
+            }}
             className={`h-7 text-[10px] ${filtroTipo === 'TODOS' ? 'bg-slate-900 text-white' : ''}`}
           >
             Todos
@@ -263,7 +278,10 @@ export default function Lancamentos() {
               key={k}
               size="sm"
               variant={filtroTipo === k ? 'default' : 'outline'}
-              onClick={() => setFiltroTipo(k)}
+              onClick={() => {
+                setFiltroTipo(k)
+                setPagina(1)
+              }}
               className={`h-7 text-[10px] ${filtroTipo === k ? 'bg-slate-900 text-white' : ''}`}
             >
               {TIPOS[k].label}
