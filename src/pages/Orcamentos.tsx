@@ -384,7 +384,7 @@ export default function Orcamentos() {
             return (
               <Card key={d.id}>
                 <CardContent className="p-2.5 space-y-1.5">
-                  <div className="flex items-start gap-2">
+                  <Link to={`/orcamentos/${d.id}`} className="flex items-start gap-2 group">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <Badge className={`text-[8px] px-1.5 py-0 border gap-0.5 ${st.cor}`}>
@@ -394,17 +394,17 @@ export default function Orcamentos() {
                           {dataBR(d.date || d.created)}
                         </span>
                       </div>
-                      <p className="text-[11px] font-bold mt-0.5 truncate">
+                      <p className="text-[11px] font-bold mt-0.5 truncate text-[#0B3D91] group-hover:underline">
                         {d.expand?.client?.nickname || d.expand?.client?.name || 'Cliente'}
                       </p>
                       <p className="text-[9px] text-muted-foreground">
-                        {(d.items || []).length} item(ns)
+                        {(d.items || []).length} item(ns) · abrir documento
                       </p>
                     </div>
                     <span className="font-mono text-xs font-bold text-[#0B3D91] shrink-0">
                       {brl(totalItensDoc(d))}
                     </span>
-                  </div>
+                  </Link>
 
                   <div className="flex gap-1 pt-1 border-t">
                     {podeAvancar && (

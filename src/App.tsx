@@ -11,6 +11,7 @@ import ClienteFicha from '@/pages/ClienteFicha'
 import ClienteForm from '@/pages/ClienteForm'
 import Lancamentos from '@/pages/Lancamentos'
 import Orcamentos from '@/pages/Orcamentos'
+import OrcamentoDetalhe from '@/pages/OrcamentoDetalhe'
 import Relatorios from '@/pages/Relatorios'
 import Configuracoes from '@/pages/Configuracoes'
 import NotFound from '@/pages/NotFound'
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/clientes/:id/editar" element={<ClienteForm />} />
             <Route path="/lancamentos" element={<Lancamentos />} />
             <Route path="/orcamentos" element={<Orcamentos />} />
+            <Route path="/orcamentos/:id" element={<OrcamentoDetalhe />} />
             <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
           </Route>

@@ -193,6 +193,12 @@ export async function salvarProduto(dados: Partial<Produto>, id?: string) {
 
 // ---------------- ORÇAMENTOS ----------------
 
+export async function obterOrcamento(id: string): Promise<Orcamento> {
+  return (await pb.collection('quotes').getOne(id, {
+    expand: 'client',
+  })) as unknown as Orcamento
+}
+
 export async function listarOrcamentos(): Promise<Orcamento[]> {
   const res = await pb.collection('quotes').getFullList({
     sort: '-date',
