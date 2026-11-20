@@ -140,12 +140,23 @@ export async function listarResumoClientes(): Promise<ResumoCliente[]> {
 
 // ---------------- PRODUTOS ----------------
 
-export async function listarProdutos(busca = ''): Promise<Produto[]> {
-  const filtro = busca.trim() ? `name ~ "${busca.replace(/"/g, '')}"` : ''
-  const res = await pb.collection('products').getFullList({
-    sort: 'name',
-    filter: filtro,
-  })
+/**
+ * Busca de produtos para o orçamento.
+ *
+ * O filtro vai para o servidor (o catálogo é grande: 1.511 itens) e procura
+ * no NOME e na CATEGORIA — digitar "dvr" ou "cftv" acha a mesma coisa.
+ * Maiúscula/minúscula não importa: o PocketBase compara sem diferenciar.
+ */
+export async function listarProdutos(busca = '', limite = 0): Promise<Produto[]> {
+  const termo = busca.trim().replace(/"/g, '')
+  const filtro = termo ? `(name ~ "${termo}" || category ~ "${termo}")` : ''
+  const opcoes = { sort: 'name', filter: filtro } as any
+
+  if (limite > 0) {
+    const res = await pb.collection('products').getList(1, limite, opcoes)
+    return res.items as unknown as Produto[]
+  }
+  const res = await pb.collection('products').getFullList(opcoes)
   return res as unknown as Produto[]
 }
 
