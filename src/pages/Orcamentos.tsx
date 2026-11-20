@@ -18,6 +18,7 @@ import {
   apagarOrcamento,
   marcarEnvio,
   salvarProduto,
+  limparCacheProdutos,
 } from '@/lib/crm'
 import {
   brl,
@@ -188,6 +189,7 @@ export default function Orcamentos() {
         { default_kind: item.kind, price: Number(item.unit_price) } as any,
         item.product_id,
       )
+      limparCacheProdutos()
       toast.success('Cadastro do produto atualizado.')
     } catch {
       toast.error('Não foi possível atualizar o cadastro.')

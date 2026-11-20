@@ -141,23 +141,50 @@ export async function listarResumoClientes(): Promise<ResumoCliente[]> {
 // ---------------- PRODUTOS ----------------
 
 /**
- * Busca de produtos para o orçamento.
+ * Normaliza texto para busca: sem acento e em maiúscula.
  *
- * O filtro vai para o servidor (o catálogo é grande: 1.511 itens) e procura
- * no NOME e na CATEGORIA — digitar "dvr" ou "cftv" acha a mesma coisa.
- * Maiúscula/minúscula não importa: o PocketBase compara sem diferenciar.
+ * O catálogo é digitado em MAIÚSCULA COM acento ("CÂMERA"). Se a pessoa
+ * digitar "camera", a comparação do banco não acha nada — então a busca é
+ * feita sobre as duas formas: como veio e sem acento.
+ */
+function semAcento(s: string): string {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+let cacheProdutos: Produto[] | null = null
+
+/**
+ * Catálogo de produtos.
+ *
+ * A busca é LOCAL, não no banco. Motivo medido: o catálogo é digitado em
+ * MAIÚSCULA COM acento ("CÂMERA BULLET"), e a comparação do SQLite não ignora
+ * acento — buscar "camera" devolvia ZERO resultados. Trazer as 1.511 linhas
+ * (~150 KB) uma vez e filtrar na memória resolve o acento, ignora maiúscula e
+ * ainda deixa a busca instantânea enquanto a pessoa digita.
  */
 export async function listarProdutos(busca = '', limite = 0): Promise<Produto[]> {
-  const termo = busca.trim().replace(/"/g, '')
-  const filtro = termo ? `(name ~ "${termo}" || category ~ "${termo}")` : ''
-  const opcoes = { sort: 'name', filter: filtro } as any
-
-  if (limite > 0) {
-    const res = await pb.collection('products').getList(1, limite, opcoes)
-    return res.items as unknown as Produto[]
+  if (!cacheProdutos) {
+    cacheProdutos = (await pb.collection('products').getFullList({
+      sort: 'name',
+    })) as unknown as Produto[]
   }
-  const res = await pb.collection('products').getFullList(opcoes)
-  return res as unknown as Produto[]
+
+  const termo = semAcento(busca.trim().toLowerCase())
+  let lista = cacheProdutos
+  if (termo) {
+    lista = cacheProdutos.filter(
+      (p) =>
+        semAcento((p.name || '').toLowerCase()).includes(termo) ||
+        semAcento((p.category || '').toLowerCase()).includes(termo) ||
+        semAcento((p.brand || '').toLowerCase()).includes(termo),
+    )
+  }
+  return limite > 0 ? lista.slice(0, limite) : lista
+}
+
+/** Limpa o cache (chamado depois de gravar preço/tipo no cadastro). */
+export function limparCacheProdutos() {
+  cacheProdutos = null
 }
 
 export async function salvarProduto(dados: Partial<Produto>, id?: string) {
