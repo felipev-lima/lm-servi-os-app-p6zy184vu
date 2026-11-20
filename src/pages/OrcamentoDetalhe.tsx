@@ -162,6 +162,21 @@ export default function OrcamentoDetalhe() {
     }
   }
 
+  /** ORÇAMENTO → PEDIDO. As demais etapas têm botão próprio (entrega/faturar). */
+  const avancarStatus = async () => {
+    if (!doc) return
+    setSalvando(true)
+    try {
+      await salvarOrcamento({ status: 'PEDIDO' } as any, doc.id)
+      toast.success('Documento aprovado como pedido.')
+      void carregar()
+    } catch (e: any) {
+      toast.error(e?.message || 'Não foi possível avançar.')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
   /** Gera o PDF (html2pdf) e abre o menu do sistema para imprimir/enviar */
   const gerarPdf = async (imprimir = false) => {
     const alvo = document.getElementById('documento-pdf')
@@ -277,6 +292,16 @@ export default function OrcamentoDetalhe() {
         >
           <Printer className="w-3.5 h-3.5" /> Imprimir
         </Button>
+        {st === 'ORCAMENTO' && (
+          <Button
+            variant="outline"
+            onClick={avancarStatus}
+            disabled={salvando}
+            className="h-8 text-[11px] gap-1.5 text-blue-800"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" /> Aprovar como pedido
+          </Button>
+        )}
         {st === 'PEDIDO' && (
           <Button
             variant="outline"
