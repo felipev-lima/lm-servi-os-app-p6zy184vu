@@ -17,6 +17,7 @@ import {
   salvarOrcamento,
   apagarOrcamento,
   marcarEnvio,
+  salvarProduto,
 } from '@/lib/crm'
 import {
   brl,
@@ -164,13 +165,33 @@ export default function Orcamentos() {
       {
         description: p.name,
         quantity: 1,
+        // preço de tabela vem preenchido, mas o campo fica editável
         unit_price: Number(p.price || 0),
-        kind: 'CONSUMO' as TipoLancamento,
+        // classificação vem pronta do cadastro (capital/consumo/serviço)
+        kind: (p.default_kind || 'CONSUMO') as TipoLancamento,
         unit: p.unit || 'UN',
         product_id: p.id,
       },
     ])
     setBuscaProduto('')
+  }
+
+  /**
+   * Grava no CADASTRO a classificação corrigida e/ou o preço novo.
+   * Chamado quando o Felipe altera o tipo ou o preço de um item do orçamento
+   * e responde "sim" na pergunta.
+   */
+  const gravarNoCadastro = async (item: any) => {
+    if (!item.product_id) return
+    try {
+      await salvarProduto(
+        { default_kind: item.kind, price: Number(item.unit_price) } as any,
+        item.product_id,
+      )
+      toast.success('Cadastro do produto atualizado.')
+    } catch {
+      toast.error('Não foi possível atualizar o cadastro.')
+    }
   }
 
   const adicionarLinhaVazia = () => {
@@ -180,8 +201,35 @@ export default function Orcamentos() {
     ])
   }
 
+  /**
+   * Ao mudar o TIPO ou o PREÇO de um produto que veio do cadastro, pergunta se
+   * a correção vale só para este orçamento ou se atualiza a carteira.
+   *
+   * É o pedido do Felipe: "posso me perguntar se eu quero manter somente neste
+   * orçamento, como preço especial, ou se quero salvar na planilha".
+   */
   const alterarItem = (i: number, campo: string, valor: any) => {
     setItens((prev) => prev.map((x, j) => (j === i ? { ...x, [campo]: valor } : x)))
+
+    const item = itens[i]
+    if (!item?.product_id) return
+    if (campo !== 'kind' && campo !== 'unit_price') return
+
+    const atualizado = { ...item, [campo]: valor }
+    const rotulo =
+      campo === 'kind'
+        ? `o tipo para ${TIPOS[valor as TipoLancamento]?.label || valor}`
+        : `o preço para ${brl(Number(valor) || 0)}`
+
+    // pergunta só depois do React atualizar o estado do item
+    setTimeout(() => {
+      const gravar = confirm(
+        `Você mudou ${rotulo}.\n\n` +
+          `OK = atualizar também o CADASTRO do produto (vale para os próximos orçamentos)\n` +
+          `Cancelar = usar só neste orçamento`,
+      )
+      if (gravar) void gravarNoCadastro(atualizado)
+    }, 120)
   }
 
   const removerItem = (i: number) => setItens((prev) => prev.filter((_, j) => j !== i))
@@ -446,8 +494,15 @@ export default function Orcamentos() {
                       key={p.id}
                       type="button"
                       onClick={() => adicionarProduto(p)}
-                      className="w-full text-left px-2 py-1.5 hover:bg-[#0B3D91]/5 flex justify-between gap-2"
+                      className="w-full text-left px-2 py-1.5 hover:bg-[#0B3D91]/5 flex items-center gap-1.5"
                     >
+                      <Badge
+                        className={`text-[7px] px-1 py-0 border shrink-0 ${
+                          TIPOS[(p.default_kind || 'CONSUMO') as TipoLancamento].cor
+                        } ${TIPOS[(p.default_kind || 'CONSUMO') as TipoLancamento].bg}`}
+                      >
+                        {TIPOS[(p.default_kind || 'CONSUMO') as TipoLancamento].label}
+                      </Badge>
                       <span className="text-[10px] truncate flex-1">{p.name}</span>
                       <span className="text-[10px] font-mono font-bold shrink-0">
                         {brl(Number(p.price || 0))}/{p.unit || 'UN'}

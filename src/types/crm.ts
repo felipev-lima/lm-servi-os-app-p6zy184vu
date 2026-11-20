@@ -23,6 +23,12 @@ export interface Produto {
   active?: boolean
   fl_product_id?: string
   pending_review?: boolean
+  /**
+   * Classificação padrão do produto (capital / consumo / serviço).
+   * Vem preenchida e pode ser corrigida na hora do orçamento — a correção
+   * volta para o cadastro, então o sistema aprende com o uso.
+   */
+  default_kind?: TipoLancamento
 }
 
 export interface Cliente {
