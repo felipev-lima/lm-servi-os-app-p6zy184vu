@@ -148,12 +148,27 @@ export default function Orcamentos() {
       .slice(0, 5)
   }, [clientes, buscaCliente])
 
+  /**
+   * Filtro do catálogo.
+   *
+   * Compara SEM acento e SEM diferenciar maiúscula: o catálogo é digitado em
+   * MAIÚSCULA COM acento ("CÂMERA BULLET") e o Felipe digita "camera". Sem
+   * tirar o acento, a busca devolvia zero — que era o defeito relatado.
+   */
   const produtosFiltrados = useMemo(() => {
-    const t = buscaProduto.trim().toLowerCase()
+    const normalizar = (s: string) =>
+      (s || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+    const t = normalizar(buscaProduto.trim())
     if (t.length < 2) return []
     return produtos
       .filter(
-        (p) => p.name.toLowerCase().includes(t) || (p.category || '').toLowerCase().includes(t),
+        (p) =>
+          normalizar(p.name).includes(t) ||
+          normalizar(p.category || '').includes(t) ||
+          normalizar(p.brand || '').includes(t),
       )
       .slice(0, 8)
   }, [produtos, buscaProduto])
