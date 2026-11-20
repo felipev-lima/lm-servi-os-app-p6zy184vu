@@ -46,6 +46,7 @@ export default function OrcamentoDetalhe() {
   const [entregador, setEntregador] = useState('')
   const [cargo, setCargo] = useState('')
   const [assinatura, setAssinatura] = useState<SignaturePadRef | null>(null)
+  const [assinaturaEntregador, setAssinaturaEntregador] = useState<SignaturePadRef | null>(null)
   const [mostrarAssinatura, setMostrarAssinatura] = useState(false)
   const [fotos, setFotos] = useState<File[]>([])
 
@@ -362,9 +363,16 @@ export default function OrcamentoDetalhe() {
 
             <div className="space-y-1">
               <Label className="text-[10px] flex items-center gap-1">
-                <PenLine className="w-3 h-3" /> Assinatura do cliente
+                <PenLine className="w-3 h-3" /> Assinatura de quem entregou
               </Label>
-              <SignaturePad onCanvasReady={setAssinatura} altura={110} />
+              <SignaturePad onCanvasReady={setAssinaturaEntregador} altura={100} />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-[10px] flex items-center gap-1">
+                <PenLine className="w-3 h-3" /> Assinatura do cliente (recebimento)
+              </Label>
+              <SignaturePad onCanvasReady={setAssinatura} altura={100} />
             </div>
 
             <div className="space-y-1">
@@ -538,12 +546,10 @@ export default function OrcamentoDetalhe() {
         >
           {assinaturas.map((a) => (
             <div key={a.nome} className="text-center break-inside-avoid">
+              {/* documento formal: sem assinatura, sai só a linha — nunca um
+                  aviso de "não cadastrada", que o cliente não deve ler */}
               <div className="h-10 flex items-end justify-center mb-1">
-                {a.img ? (
-                  <img src={a.img} alt="Assinatura" className="max-h-10 object-contain" />
-                ) : (
-                  <span className="text-[7px] text-slate-300">rubrica não cadastrada</span>
-                )}
+                {a.img && <img src={a.img} alt="Assinatura" className="max-h-10 object-contain" />}
               </div>
               <div className="border-t border-slate-800 pt-0.5">
                 <p className="text-[7.5px] font-bold truncate">{a.nome}</p>
