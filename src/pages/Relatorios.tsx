@@ -330,13 +330,16 @@ export default function Relatorios() {
                     <tr key={l.id} className="border-b last:border-0 hover:bg-slate-50">
                       <td className="p-1.5 whitespace-nowrap">{dataBR(l.date)}</td>
                       <td className="p-1.5">
-                        <Badge
-                          className={`text-[8px] px-1 py-0 border ${
+                        {/* texto colorido em vez de <Badge>: numa lista de 70+
+                            itens cada Badge custa 3 elementos no DOM, e o
+                            celular sente a diferença */}
+                        <span
+                          className={`text-[8px] px-1 py-0.5 rounded border font-bold ${
                             TIPOS[l.kind]?.cor
                           } ${TIPOS[l.kind]?.bg}`}
                         >
                           {TIPOS[l.kind]?.label}
-                        </Badge>
+                        </span>
                       </td>
                       <td className="p-1.5 text-muted-foreground">
                         {l.item_type === 'SERVICO' ? 'Serviço' : 'Produto'}
