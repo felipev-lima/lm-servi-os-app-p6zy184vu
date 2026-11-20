@@ -49,6 +49,15 @@ export async function apagarCliente(id: string) {
 
 // ---------------- LANÇAMENTOS ----------------
 
+/**
+ * Total de lançamentos da última consulta paginada.
+ *
+ * Existe porque `getList` devolve só a página pedida, mas a tela precisa saber
+ * quantos existem ao todo para desenhar a navegação. Antes a tela pedia TODOS
+ * os 946 de uma vez: ~8.500 elementos no DOM, o que travava o celular.
+ */
+export let ultimoTotal = 0
+
 export async function listarLancamentos(opcoes?: {
   clienteId?: string
   de?: string
@@ -56,6 +65,8 @@ export async function listarLancamentos(opcoes?: {
   tipo?: string
   /** Quando informado, devolve só os N mais recentes (abertura do painel). */
   limite?: number
+  /** Página (1-based). Usado junto com `limite` para paginar a lista. */
+  pagina?: number
 }): Promise<Lancamento[]> {
   const partes: string[] = []
   if (opcoes?.clienteId) partes.push(`client = "${opcoes.clienteId}"`)
@@ -73,11 +84,15 @@ export async function listarLancamentos(opcoes?: {
   }
 
   if (opcoes?.limite) {
-    const res = await pb.collection('transactions').getList(1, opcoes.limite, opcoesReq)
+    const res = await pb
+      .collection('transactions')
+      .getList(opcoes.pagina || 1, opcoes.limite, opcoesReq)
+    ultimoTotal = res.totalItems
     return res.items as unknown as Lancamento[]
   }
 
   const res = await pb.collection('transactions').getFullList(opcoesReq)
+  ultimoTotal = res.length
   return res as unknown as Lancamento[]
 }
 

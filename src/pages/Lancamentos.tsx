@@ -19,6 +19,7 @@ import {
   salvarLancamento,
   apagarLancamento,
   marcarEnvio,
+  ultimoTotal,
 } from '@/lib/crm'
 import {
   brl,
@@ -52,6 +53,8 @@ import {
   Send,
   Clock3,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -78,20 +81,29 @@ export default function Lancamentos() {
   const [osRef, setOsRef] = useState('')
   const [salvando, setSalvando] = useState(false)
 
-  const carregar = async () => {
+  const POR_PAGINA = 40
+  const [pagina, setPagina] = useState(1)
+  const [totalItens, setTotalItens] = useState(0)
+
+  const carregar = async (pag = pagina) => {
     setCarregando(true)
     try {
-      const [cs, ls] = await Promise.all([listarClientes(), listarLancamentos()])
+      const [cs, ls] = await Promise.all([
+        listarClientes(),
+        listarLancamentos({ limite: POR_PAGINA, pagina: pag }),
+      ])
       setClientes(cs)
       setLancamentos(ls)
+      setTotalItens(ultimoTotal)
     } finally {
       setCarregando(false)
     }
   }
 
   useEffect(() => {
-    void carregar()
-  }, [])
+    void carregar(pagina)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagina])
 
   // abre o formulário quando vem do painel/ficha (?novo=1)
   useEffect(() => {
@@ -170,7 +182,8 @@ export default function Lancamentos() {
       p.delete('novo')
       p.delete('cliente')
       setParams(p, { replace: true })
-      void carregar()
+      void carregar(1)
+      setPagina(1)
     } catch (err: any) {
       toast.error(err?.message || 'Não foi possível salvar.')
     } finally {
@@ -183,7 +196,7 @@ export default function Lancamentos() {
     try {
       await apagarLancamento(l.id)
       toast.success('Excluído.')
-      void carregar()
+      void carregar(pagina)
     } catch {
       toast.error('Não foi possível excluir.')
     }
@@ -191,7 +204,7 @@ export default function Lancamentos() {
 
   const marcar = async (l: Lancamento, situacao: 'PENDENTE' | 'ENVIADA') => {
     await marcarEnvio([l.id], situacao)
-    void carregar()
+    void carregar(pagina)
   }
 
   const filtrados = lancamentos.filter((l) => {
@@ -286,9 +299,38 @@ export default function Lancamentos() {
       </div>
 
       <div className="flex items-center justify-between text-[11px] px-1">
-        <span className="font-semibold">{filtrados.length} lançamento(s)</span>
+        <span className="font-semibold">
+          {filtrados.length} de {totalItens} lançamento(s)
+        </span>
         <span className="font-mono font-bold text-[#0B3D91]">Total: {brl(somaFiltrada)}</span>
       </div>
+
+      {/* navegação de páginas: 40 por vez para o celular não travar */}
+      {totalItens > POR_PAGINA && (
+        <div className="flex items-center justify-between gap-2 px-1">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pagina <= 1}
+            onClick={() => setPagina((p) => Math.max(1, p - 1))}
+            className="h-7 text-[10px] gap-1"
+          >
+            <ChevronLeft className="w-3 h-3" /> Anterior
+          </Button>
+          <span className="text-[10px] text-muted-foreground">
+            Página {pagina} de {Math.ceil(totalItens / POR_PAGINA)}
+          </span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pagina >= Math.ceil(totalItens / POR_PAGINA)}
+            onClick={() => setPagina((p) => p + 1)}
+            className="h-7 text-[10px] gap-1"
+          >
+            Próxima <ChevronRight className="w-3 h-3" />
+          </Button>
+        </div>
+      )}
 
       {carregando ? (
         <div className="flex items-center justify-center py-16 text-sm text-muted-foreground gap-2">
